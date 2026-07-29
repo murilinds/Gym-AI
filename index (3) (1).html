@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RF TRAINER — Treino sob medida</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0a0a;
+  --charcoal:#18181a;
+  --charcoal-2:#212124;
+  --card:#1c1c1f;
+  --steel:#3a3a3e;
+  --ash:#9a9a9f;
+  --ash-dim:#6e6e73;
+  --white:#f2f2f0;
+  --red:#c4122f;
+  --red-bright:#e8163a;
+  --red-dark:#6e0a1b;
+  --font-display:'Anton', sans-serif;
+  --font-body:'Inter', sans-serif;
+  --font-mono:'JetBrains Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--black);
+  color:var(--white);
+  font-family:var(--font-body);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+img,svg{display:block;max-width:100%;}
+a{color:inherit;}
+::selection{background:var(--red);color:var(--white);}
+
+/* ---------- utilities ---------- */
+.container{max-width:1120px;margin:0 auto;padding:0 24px;}
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:12px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--red-bright);
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:18px;
+}
+.eyebrow::before{content:"";width:28px;height:2px;background:var(--red-bright);display:inline-block;}
+h1,h2,h3{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.01em;font-weight:400;line-height:1.05;}
+.section{padding:96px 0;position:relative;}
+.section-title{font-size:clamp(30px,4.4vw,52px);margin-bottom:16px;}
+.section-sub{color:var(--ash);max-width:560px;font-size:16px;margin-bottom:56px;}
+.btn{
+  font-family:var(--font-mono);
+  font-size:13px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:700;
+  padding:16px 34px;
+  border-radius:2px;
+  border:2px solid var(--red);
+  background:var(--red);
+  color:var(--white);
+  cursor:pointer;
+  transition:transform .15s ease, background .15s ease, box-shadow .2s ease;
+  display:inline-flex;align-items:center;gap:10px;
+}
+.btn:hover{background:var(--red-bright);border-color:var(--red-bright);box-shadow:0 0 0 6px rgba(196,18,47,.14);}
+.btn:active{transform:scale(.97);}
+.btn-outline{background:transparent;color:var(--white);border-color:var(--steel);}
+.btn-outline:hover{border-color:var(--white);background:transparent;box-shadow:none;}
+.btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none;}
+.btn:disabled:hover{background:var(--red);border-color:var(--red);}
+
+/* ---------- nav ---------- */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(10,10,10,.78);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;max-width:1120px;margin:0 auto;}
+.logo{font-family:var(--font-display);font-size:22px;letter-spacing:.03em;}
+.logo span{color:var(--red-bright);}
+.nav-links{display:flex;gap:32px;list-style:none;font-family:var(--font-mono);font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--ash);}
+.nav-links a{text-decoration:none;transition:color .15s;}
+.nav-links a:hover{color:var(--white);}
+@media(max-width:640px){.nav-links{display:none;}}
+
+/* ---------- hero ---------- */
+.hero{
+  min-height:100vh;
+  display:flex;align-items:center;
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 28%, rgba(196,18,47,.18), transparent 60%),
+    linear-gradient(180deg, #000 0%, #0d0d0e 60%, #000 100%);
+  padding-top:80px;
+}
+.hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/></svg>");
+}
+.hero-grid{
+  width:100%;
+  display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+  position:relative;z-index:2;
+}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+.hero-copy{padding:0 24px;}
+.hero-copy h1{font-size:clamp(38px,6vw,72px);margin-bottom:20px;}
+.hero-copy h1 em{font-style:normal;color:var(--red-bright);}
+.hero-copy p{color:var(--ash);font-size:17px;max-width:440px;margin-bottom:34px;}
+.hero-stats{display:flex;gap:28px;margin-top:44px;flex-wrap:wrap;}
+.hero-stat b{display:block;font-family:var(--font-mono);font-size:24px;color:var(--red-bright);}
+.hero-stat span{font-size:12px;color:var(--ash-dim);text-transform:uppercase;letter-spacing:.08em;}
+
+/* --- muscular back figure (pure CSS/SVG, no external image) --- */
+.figure-wrap{
+  position:relative;height:640px;display:flex;align-items:center;justify-content:center;
+}
+.back-figure {
+  position: relative;
+  width: 340px;
+  height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.back-shape {
+  position: absolute;
+  inset: 0;
+  /* Formato geométrico de diamante (losango estendido) */
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  
+  /* Gradiente em tons de branco/cinza sutil e semitransparente */
+  background: linear-gradient(
+    180deg, 
+    rgba(255, 255, 255, 0.12) 0%, 
+    rgba(255, 255, 255, 0.03) 60%, 
+    rgba(255, 255, 255, 0.00) 100%
+  );
+  
+  /* Borda sutil para dar acabamento suave */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  
+  /* Efeito de iluminação suave */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  
+  /* Ajuste geral da opacidade para torná-lo bem discreto */
+  opacity: 0.6;
+}
+.back-shape::before {
+  display: none;
+}
+.rim-light{
+  position:absolute;inset:0;
+  clip-path:path("M170,10 C230,10 278,40 292,110 C302,158 296,205 280,248 C300,268 312,300 306,345 C300,385 288,430 280,468 C275,492 258,502 244,488 C234,476 230,455 227,432 C210,452 190,462 170,464 C150,462 130,452 113,432 C110,455 106,476 96,488 C82,502 65,492 60,468 C52,430 40,385 34,345 C28,300 40,268 60,248 C44,205 38,158 48,110 C62,40 110,10 170,10 Z");
+  background:radial-gradient(600px 500px at 88% 30%, rgba(196,18,47,.35), transparent 55%);
+  mix-blend-mode:screen;
+}
+.stamp{
+  position:absolute;top:30%;left:50%;
+  transform:translate(-50%,-50%) rotate(-6deg);
+  text-align:center;width:110%;
+  mix-blend-mode:overlay;
+  filter:contrast(1.4) brightness(1.1);
+}
+.stamp .l1{font-family:var(--font-display);font-size:52px;letter-spacing:.06em;color:#fff;line-height:1;text-shadow:0 0 18px rgba(0,0,0,.4);}
+.stamp .l2{font-family:var(--font-mono);font-size:12px;letter-spacing:.5em;color:#fff;margin-top:6px;}
+.figure-caption{
+  position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+  font-family:var(--font-mono);font-size:11px;color:var(--ash-dim);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;
+}
+.scroll-cue{
+  position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
+  font-family:var(--font-mono);font-size:11px;color:var(--ash-dim);letter-spacing:.12em;text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:8px;z-index:3;
+}
+.scroll-cue .line{width:1px;height:30px;background:linear-gradient(var(--red-bright),transparent);animation:scrolldrop 1.6s infinite;}
+@keyframes scrolldrop{0%{opacity:0;transform:scaleY(0);transform-origin:top;}50%{opacity:1;transform:scaleY(1);transform-origin:top;}100%{opacity:0;transform:scaleY(1);transform-origin:bottom;}}
+@media(prefers-reduced-motion:reduce){.scroll-cue .line{animation:none;}}
+
+/* ---------- diferenciais ---------- */
+.dif-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  background: var(--steel);
+  border: 1px solid var(--steel);
+}
+
+.dif-grid > * {
+  flex: 1 1 280px; /* Faz cada card crescer para preencher a linha inteira */
+  max-width: 100%;
+}
+.dif-card{background:var(--charcoal);padding:32px 28px;transition:background .2s;}
+.dif-card:hover{background:var(--charcoal-2);}
+.dif-num{font-family:var(--font-mono);color:var(--red-bright);font-size:12px;letter-spacing:.1em;margin-bottom:14px;display:block;}
+.dif-card h3{font-size:19px;margin-bottom:10px;letter-spacing:0;}
+.dif-card p{color:var(--ash);font-size:14.5px;}
+
+/* ---------- sports strip ---------- */
+.sports-strip{border-top:1px solid var(--steel);border-bottom:1px solid var(--steel);padding:28px 0;overflow:hidden;background:var(--charcoal);}
+.sports-track{display:flex;gap:0;width:max-content;animation:marquee 32s linear infinite;}
+@media(prefers-reduced-motion:reduce){.sports-track{animation:none;}}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.sports-track span{
+  font-family:var(--font-mono);font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:var(--ash-dim);
+  padding:0 26px;border-right:1px solid var(--steel);white-space:nowrap;
+}
+.sports-track span b{color:var(--white);font-weight:600;}
+
+/* ---------- wizard ---------- */
+.wizard-box{background:var(--card);border:1px solid var(--steel);position:relative;}
+.progress-bar{display:flex;border-bottom:1px solid var(--steel);}
+.progress-seg{flex:1;height:4px;background:var(--steel);position:relative;}
+.progress-seg.active{background:var(--red);}
+.progress-seg.done{background:var(--red-dark);}
+.step-meta{display:flex;justify-content:space-between;align-items:center;padding:22px 32px 0;font-family:var(--font-mono);font-size:12px;color:var(--ash-dim);letter-spacing:.08em;text-transform:uppercase;}
+.step-body{padding:20px 32px 36px;min-height:340px;}
+.step{display:none;animation:fadein .35s ease;}
+.step.active{display:block;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.step h3{font-size:26px;margin-bottom:6px;}
+.step .step-hint{color:var(--ash);font-size:14px;margin-bottom:26px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+@media(max-width:560px){.field-row{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:8px;}
+.field label{font-family:var(--font-mono);font-size:11.5px;color:var(--ash);text-transform:uppercase;letter-spacing:.07em;}
+.field input[type=text],.field input[type=number],.field textarea,.field select{
+  background:var(--charcoal-2);border:1px solid var(--steel);color:var(--white);
+  padding:12px 14px;font-family:var(--font-body);font-size:14.5px;border-radius:2px;outline:none;
+  transition:border-color .15s;
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--red-bright);}
+.field textarea{resize:vertical;min-height:80px;}
+
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+.choice-grid.wide{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));}
+.choice{position:relative;}
+.choice input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0;width:100%;height:100%;}
+.choice .card{
+  border:1px solid var(--steel);padding:16px 14px;text-align:center;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  transition:all .15s;background:var(--charcoal-2);
+}
+.choice .card .ic{font-size:22px;}
+.choice .card .lb{font-size:13.5px;font-weight:600;}
+.choice .card .sub{font-size:11.5px;color:var(--ash-dim);}
+.choice input:checked + .card{border-color:var(--red-bright);background:rgba(196,18,47,.12);box-shadow:0 0 0 1px var(--red-bright) inset;}
+.choice input:focus-visible + .card{outline:2px solid var(--red-bright);outline-offset:2px;}
+
+.step-actions{display:flex;justify-content:space-between;align-items:center;padding:22px 32px;border-top:1px solid var(--steel);}
+.hint-inline{font-size:12.5px;color:var(--ash-dim);font-family:var(--font-mono);}
+
+/* ---------- resultado ---------- */
+#resultado{display:none;}
+.plan-header{border:1px solid var(--steel);background:var(--card);padding:34px;margin-bottom:26px;}
+.plan-header h3{font-size:30px;margin-bottom:10px;}
+.plan-tag{display:inline-block;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--red-bright);border:1px solid var(--red-dark);padding:4px 10px;margin-right:8px;margin-bottom:14px;}
+.day-card{border:1px solid var(--steel);background:var(--card);margin-bottom:18px;}
+.day-head{display:flex;justify-content:space-between;align-items:center;padding:18px 26px;border-bottom:1px solid var(--steel);background:var(--charcoal-2);}
+.day-head h4{font-family:var(--font-display);font-size:20px;letter-spacing:.02em;}
+.day-head span{font-family:var(--font-mono);font-size:11.5px;color:var(--ash-dim);text-transform:uppercase;}
+.block{padding:18px 26px;border-bottom:1px solid var(--steel);}
+.block:last-child{border-bottom:none;}
+.block-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--red-bright);margin-bottom:10px;}
+table.ex-table{width:100%;border-collapse:collapse;font-size:14px;}
+table.ex-table th{text-align:left;font-family:var(--font-mono);font-size:11px;color:var(--ash-dim);text-transform:uppercase;letter-spacing:.06em;padding:6px 8px;border-bottom:1px solid var(--steel);}
+table.ex-table td{padding:8px 8px;border-bottom:1px solid rgba(255,255,255,.05);}
+.drill-list{list-style:none;}
+.drill-list li{padding:6px 0 6px 18px;position:relative;font-size:14.5px;color:var(--white);}
+.drill-list li::before{content:"—";position:absolute;left:0;color:var(--red-bright);}
+.note-box{border:1px dashed var(--steel);padding:18px 22px;font-size:14px;color:var(--ash);margin-bottom:18px;}
+.note-box b{color:var(--white);}
+.period-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--steel);border:1px solid var(--steel);margin-bottom:26px;}
+.period-cell{background:var(--card);padding:20px;}
+.period-cell b{display:block;font-family:var(--font-mono);color:var(--red-bright);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.period-cell p{font-size:13.5px;color:var(--ash);}
+.disclaimer{font-size:12.5px;color:var(--ash-dim);border-top:1px solid var(--steel);padding-top:20px;margin-top:10px;}
+
+/* ---------- AI loading + AI content ---------- */
+.ai-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:100px 24px;text-align:center;}
+.spinner{width:46px;height:46px;border-radius:50%;border:3px solid var(--steel);border-top-color:var(--red-bright);animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ai-loading p{font-family:var(--font-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ash);}
+.ai-error{border:1px solid var(--red-dark);background:rgba(196,18,47,.08);padding:26px;font-size:14.5px;color:var(--ash);}
+.ai-error b{color:var(--red-bright);display:block;margin-bottom:8px;}
+.ai-content{border:1px solid var(--steel);background:var(--card);padding:38px;margin-bottom:26px;}
+.ai-content h1,.ai-content h2,.ai-content h3{color:var(--white);margin:26px 0 12px;}
+.ai-content h1:first-child,.ai-content h2:first-child,.ai-content h3:first-child{margin-top:0;}
+.ai-content h1{font-size:30px;}
+.ai-content h2{font-size:23px;color:var(--red-bright);}
+.ai-content h3{font-size:18px;font-family:var(--font-body);font-weight:700;text-transform:none;}
+.ai-content p{color:var(--ash);font-size:15px;margin-bottom:14px;}
+.ai-content strong{color:var(--white);}
+.ai-content ul,.ai-content ol{margin:0 0 16px 22px;color:var(--ash);font-size:14.5px;}
+.ai-content li{margin-bottom:6px;}
+.ai-content hr{border:none;border-top:1px solid var(--steel);margin:24px 0;}
+
+footer{border-top:1px solid var(--steel);padding:44px 0;text-align:center;color:var(--ash-dim);font-size:13px;font-family:var(--font-mono);}
+footer b{color:var(--red-bright);}
+
+.checkbox-list{display:flex;flex-wrap:wrap;gap:10px;}
+.checkbox-list label{
+  display:flex;align-items:center;gap:8px;border:1px solid var(--steel);padding:9px 14px;font-size:13.5px;cursor:pointer;background:var(--charcoal-2);
+}
+.checkbox-list input:checked ~ span, .checkbox-list label:has(input:checked){border-color:var(--red-bright);background:rgba(196,18,47,.12);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">RF<span>TRAINER</span></div>
+    <ul class="nav-links">
+      <li><a href="#diferenciais">Diferenciais</a></li>
+      <li><a href="#esportes">Modalidades</a></li>
+      <li><a href="#wizard">Montar treino</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow">Personalização real. Sem chute.</div>
+      <h1>Treino sob medida,<br><em>feito pra você.</em></h1>
+      <p>RF Trainer analisa seu corpo, sua rotina, seu histórico de saúde e o esporte que você pratica pra montar um plano de treino que faz sentido — e não um modelo genérico de internet.</p>
+      <a href="#wizard" class="btn">Montar meu treino ↓</a>
+      <div class="hero-stats">
+        <div class="hero-stat"><b>12+</b><span>Modalidades</span></div>
+        <div class="hero-stat"><b>9</b><span>Dimensões avaliadas</span></div>
+        <div class="hero-stat"><b>100%</b><span>Ajustado ao seu perfil</span></div>
+      </div>
+    </div>
+    <div class="figure-wrap">
+      <div class="back-figure">
+        <div class="back-shape"></div>
+        <div class="rim-light"></div>
+        <div class="stamp"><div class="l1">RF TRAINER</div><div class="l2">PERFORMANCE</div></div>
+        <div class="figure-caption">Perfil · Objetivo · Esporte · Rotina · Recuperação</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>Role</span><div class="line"></div></div>
+</section>
+
+<!-- DIFERENCIAIS -->
+<section class="section" id="diferenciais">
+  <div class="container">
+    <div class="eyebrow">Como o RF Trainer pensa</div>
+    <h2 class="section-title">Muito além de peso<br>e altura</h2>
+    <p class="section-sub">Um treino genérico ignora quem você é. O nosso cruza dados do seu corpo, sua saúde, sua rotina e o esporte que você pratica pra entregar algo realmente individual.</p>
+  </div>
+  <div class="container">
+    <div class="dif-grid">
+      <div class="dif-card"><span class="dif-num">01</span><h3>Corpo &amp; genética</h3><p>Idade, sexo, altura, peso, percentual de gordura, circunferências e predisposições — quando você souber informar.</p></div>
+      <div class="dif-card"><span class="dif-num">02</span><h3>Objetivo real</h3><p>Hipertrofia, força, emagrecimento, condicionamento, definição, saúde geral ou desempenho no seu esporte.</p></div>
+      <div class="dif-card"><span class="dif-num">03</span><h3>Rotina de verdade</h3><p>Dias disponíveis, tempo por sessão e como é seu dia (sentado, em pé, corrido).</p></div>
+      <div class="dif-card"><span class="dif-num">04</span><h3>Saúde em primeiro lugar</h3><p>Lesões, dores, cirurgias e cuidados especiais entram na equação antes de qualquer carga.</p></div>
+      <div class="dif-card"><span class="dif-num">05</span><h3>Equipamento disponível</h3><p>Academia completa, academia básica, casa com halteres ou só o peso do corpo — o treino se adapta.</p></div>
+      <div class="dif-card"><span class="dif-num">06</span><h3>Periodização</h3><p>Progressão semanal, mesociclo de 4 semanas e visão macro de temporada, não só o treino de hoje.</p></div>
+      <div class="dif-card"><span class="dif-num">07</span><h3>Aquecimento e mobilidade</h3><p>Todo plano vem com ativação, mobilidade específica e desaquecimento — não só a parte principal.</p></div>
+      <div class="dif-card"><span class="dif-num">08</span><h3>Substituição inteligente</h3><p>Sem equipamento, sem quadra ou sem piscina? O plano troca os exercícios automaticamente.</p></div>
+      <div class="dif-card"><span class="dif-num">09</span><h3>Específico pro seu esporte</h3><p>Explosão pra quem joga futebol, resistência pra quem corre, potência pra quem nada — cada esporte pede algo diferente.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SPORTS STRIP -->
+<div class="sports-strip" id="esportes">
+  <div class="sports-track" id="sportsTrack"></div>
+</div>
+
+<!-- WIZARD -->
+<section class="section" id="wizard">
+  <div class="container">
+    <div class="eyebrow">Passo a passo</div>
+    <h2 class="section-title">Monte seu treino</h2>
+    <p class="section-sub">Responda com calma — quanto mais completo, mais preciso fica o plano gerado no final.</p>
+
+    <div class="wizard-box">
+      <div class="progress-bar" id="progressBar"></div>
+      <div class="step-meta"><span id="stepLabel">Passo 1 de 9</span><span id="stepName">Modalidade</span></div>
+      <form id="wizardForm">
+        <div class="step-body">
+
+          <!-- STEP 1: MODALIDADE -->
+          <div class="step active" data-step="1">
+            <h3>Qual modalidade você pratica?</h3>
+            <p class="step-hint">Isso define o tipo de treino, os exercícios e a lógica de periodização.</p>
+            <div class="choice-grid" id="modalidadeGrid"></div>
+          </div>
+
+          <!-- STEP 2: DADOS PESSOAIS -->
+          <div class="step" data-step="2">
+            <h3>Seus dados</h3>
+            <p class="step-hint">Base do seu perfil físico.</p>
+            <div class="field-row">
+              <div class="field"><label>Nome</label><input type="text" id="nome" required></div>
+              <div class="field"><label>Idade</label><input type="number" id="idade" min="10" max="90" required></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Altura (cm)</label><input type="number" id="altura" min="120" max="230" required></div>
+              <div class="field"><label>Peso (kg)</label><input type="number" id="peso" min="30" max="250" required></div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Sexo</label>
+                <select id="sexo" required>
+                  <option value="">Selecione</option>
+                  <option value="masculino">Masculino</option>
+                  <option value="feminino">Feminino</option>
+                  <option value="outro">Prefiro não informar</option>
+                </select>
+              </div>
+              <div class="field"><label>% de gordura (se souber — opcional)</label><input type="number" id="gordura" min="3" max="60" placeholder="Ex: 18"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Circunferências — opcional (cintura, braço, coxa em cm)</label><input type="text" id="circunferencias" placeholder="Ex: cintura 82, braço 33, coxa 55"></div>
+              <div class="field"><label>Genética / observações — opcional</label><input type="text" id="genetica" placeholder="Ex: facilidade pra ganhar massa, fibras explosivas"></div>
+            </div>
+          </div>
+
+          <!-- STEP 3: OBJETIVO -->
+          <div class="step" data-step="3">
+            <h3>Qual seu objetivo principal?</h3>
+            <p class="step-hint">Isso define séries, repetições, descanso e o foco do plano.</p>
+            <div class="choice-grid wide" id="objetivoGrid"></div>
+          </div>
+
+          <!-- STEP 4: NIVEL -->
+          <div class="step" data-step="4">
+            <h3>Qual seu nível de experiência?</h3>
+            <div class="choice-grid" id="nivelGrid">
+              <label class="choice"><input type="radio" name="nivel" value="iniciante" required><span class="card"><span class="ic">🌱</span><span class="lb">Iniciante</span><span class="sub">Até 6 meses</span></span></label>
+              <label class="choice"><input type="radio" name="nivel" value="intermediario"><span class="card"><span class="ic">📈</span><span class="lb">Intermediário</span><span class="sub">6 meses a 2 anos</span></span></label>
+              <label class="choice"><input type="radio" name="nivel" value="avancado"><span class="card"><span class="ic">🏆</span><span class="lb">Avançado</span><span class="sub">2+ anos</span></span></label>
+            </div>
+          </div>
+
+          <!-- STEP 5: ROTINA -->
+          <div class="step" data-step="5">
+            <h3>Sua rotina de treino</h3>
+            <div class="field-row">
+              <div class="field">
+                <label>Dias disponíveis por semana</label>
+                <select id="dias" required>
+                  <option value="">Selecione</option>
+                  <option value="2">2 dias</option>
+                  <option value="3">3 dias</option>
+                  <option value="4">4 dias</option>
+                  <option value="5">5 dias</option>
+                  <option value="6">6 dias</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Tempo por sessão</label>
+                <select id="tempo" required>
+                  <option value="">Selecione</option>
+                  <option value="30">Até 30 min</option>
+                  <option value="45">45 min</option>
+                  <option value="60">60 min</option>
+                  <option value="90">90 min ou mais</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Como é seu dia a dia (trabalho/estudo)?</label>
+                <select id="rotinaDia">
+                  <option value="sentado">Maior parte sentado</option>
+                  <option value="pe">Maior parte em pé / me movimentando</option>
+                  <option value="misto">Misto</option>
+                </select>
+              </div>
+              <div></div>
+            </div>
+          </div>
+
+          <!-- STEP 6: LOCAL / EQUIPAMENTO -->
+          <div class="step" data-step="6">
+            <h3 id="localTitle">Onde e com o que você treina?</h3>
+            <p class="step-hint" id="localHint">O plano troca os exercícios automaticamente conforme o que você tem disponível.</p>
+            <div class="choice-grid wide" id="localGrid"></div>
+          </div>
+
+          <!-- STEP 7: SAUDE -->
+          <div class="step" data-step="7">
+            <h3>Saúde e histórico</h3>
+            <p class="step-hint">Marque tudo que se aplica. Isso evita exercícios que podem te machucar.</p>
+            <div class="checkbox-list" id="saudeCheckboxes">
+              <label><input type="checkbox" value="joelho"> Dor / lesão no joelho</label>
+              <label><input type="checkbox" value="ombro"> Dor / lesão no ombro</label>
+              <label><input type="checkbox" value="coluna"> Dor / lesão na coluna</label>
+              <label><input type="checkbox" value="tornozelo"> Dor / lesão no tornozelo</label>
+              <label><input type="checkbox" value="cirurgia"> Cirurgia recente</label>
+              <label><input type="checkbox" value="cardiaco"> Condição cardíaca</label>
+              <label><input type="checkbox" value="nenhuma"> Nenhuma restrição</label>
+            </div>
+            <div class="field" style="margin-top:20px;">
+              <label>Medicamentos em uso / observações — opcional</label>
+              <textarea id="saudeObs" placeholder="Qualquer informação relevante para adaptar o treino com segurança"></textarea>
+            </div>
+          </div>
+
+          <!-- STEP 8: ALIMENTACAO -->
+          <div class="step" data-step="8">
+            <h3>Alimentação</h3>
+            <div class="field-row">
+              <div class="field">
+                <label>Quantas refeições você faz por dia?</label>
+                <select id="refeicoes">
+                  <option value="2">2</option>
+                  <option value="3" selected>3</option>
+                  <option value="4">4</option>
+                  <option value="5">5 ou mais</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Consegue bater sua proteína diária?</label>
+                <select id="proteina">
+                  <option value="sim">Sim, geralmente</option>
+                  <option value="nao">Não</option>
+                  <option value="nao_sei">Não sei dizer</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Restrição alimentar</label>
+                <select id="restricao">
+                  <option value="nenhuma">Nenhuma</option>
+                  <option value="vegetariano">Vegetariano</option>
+                  <option value="vegano">Vegano</option>
+                  <option value="lactose">Intolerância a lactose</option>
+                  <option value="gluten">Restrição a glúten</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Orçamento para alimentação</label>
+                <select id="orcamento">
+                  <option value="baixo">Enxuto</option>
+                  <option value="medio" selected>Médio</option>
+                  <option value="alto">Sem grandes limitações</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 9: RECUPERACAO -->
+          <div class="step" data-step="9">
+            <h3>Recuperação</h3>
+            <div class="field-row">
+              <div class="field">
+                <label>Horas de sono por noite</label>
+                <select id="sono">
+                  <option value="menos5">Menos de 5h</option>
+                  <option value="5a6">5 a 6h</option>
+                  <option value="7a8" selected>7 a 8h</option>
+                  <option value="mais8">Mais de 8h</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Nível de estresse no dia a dia</label>
+                <select id="estresse">
+                  <option value="baixo">Baixo</option>
+                  <option value="medio" selected>Médio</option>
+                  <option value="alto">Alto</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="step-actions">
+          <button type="button" class="btn btn-outline" id="btnPrev" style="visibility:hidden;">← Voltar</button>
+          <span class="hint-inline" id="validationHint"></span>
+          <button type="button" class="btn" id="btnNext">Próximo →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTADO -->
+<section class="section" id="resultado">
+  <div class="container" id="resultadoContent"></div>
+</section>
+
+<footer>
+  <div class="container"><b>RF TRAINER</b> — treino sob medida. Este gerador entrega um plano de exemplo baseado em regras gerais e não substitui a orientação de um profissional de educação física.</div>
+</footer>
+
+<script>
+/* =========================================================
+   DADOS
+   ========================================================= */
+const MODALIDADES = [
+  {v:"musculacao", ic:"🏋️", lb:"Musculação"},
+  {v:"corrida", ic:"🏃", lb:"Corrida"},
+  {v:"futebol", ic:"⚽", lb:"Futebol"},
+  {v:"basquete", ic:"🏀", lb:"Basquete"},
+  {v:"volei", ic:"🏐", lb:"Vôlei"},
+  {v:"natacao", ic:"🏊", lb:"Natação"},
+  {v:"ciclismo", ic:"🚴", lb:"Ciclismo"},
+  {v:"lutas", ic:"🥊", lb:"Lutas"},
+  {v:"calistenia", ic:"🤸", lb:"Calistenia"},
+  {v:"crossfit", ic:"🔥", lb:"CrossFit"},
+  {v:"tenis", ic:"🎾", lb:"Tênis"},
+  {v:"outro", ic:"🏅", lb:"Outro esporte"},
+];
+
+const OBJETIVOS_MUSCULACAO = [
+  {v:"hipertrofia", ic:"💪", lb:"Hipertrofia"},
+  {v:"forca", ic:"🏋️", lb:"Força"},
+  {v:"emagrecimento", ic:"🔥", lb:"Emagrecimento"},
+  {v:"condicionamento", ic:"⚡", lb:"Condicionamento"},
+  {v:"definicao", ic:"🔪", lb:"Definição"},
+  {v:"saude_geral", ic:"❤️", lb:"Saúde geral"},
+];
+const OBJETIVOS_ESPORTE = [
+  {v:"desempenho", ic:"🎯", lb:"Desempenho esportivo"},
+  {v:"resistencia", ic:"⏱️", lb:"Resistência / Condicionamento"},
+  {v:"emagrecimento", ic:"🔥", lb:"Emagrecimento"},
+  {v:"competicao", ic:"🏆", lb:"Preparação para competição"},
+  {v:"saude_geral", ic:"❤️", lb:"Saúde geral"},
+];
+
+const LOCAL_MUSCULACAO = [
+  {v:"academia_completa", ic:"🏢", lb:"Academia completa", sub:"Máquinas, barras, halteres"},
+  {v:"academia_basica", ic:"🏋️", lb:"Academia básica", sub:"Halteres e poucos aparelhos"},
+  {v:"casa_equipada", ic:"🏠", lb:"Casa com equipamento", sub:"Halteres / elásticos"},
+  {v:"casa_simples", ic:"🧍", lb:"Casa sem equipamento", sub:"Peso do corpo"},
+];
+const LOCAL_ESPORTE = [
+  {v:"completo", ic:"✅", lb:"Acesso completo", sub:"Quadra / campo / piscina / pista"},
+  {v:"parcial", ic:"🌓", lb:"Acesso parcial", sub:"Treino livre, sem espaço oficial"},
+  {v:"sem_acesso", ic:"🚫", lb:"Sem acesso agora", sub:"Preciso adaptar o treino"},
+];
+
+/* =========================================================
+   RENDER DE INPUTS DINÂMICOS
+   ========================================================= */
+function renderChoiceGrid(container, items, name, withSub){
+  container.innerHTML = items.map((it,i)=>`
+    <label class="choice">
+      <input type="radio" name="${name}" value="${it.v}" ${i===0?"":""} required>
+      <span class="card">
+        <span class="ic">${it.ic}</span>
+        <span class="lb">${it.lb}</span>
+        ${withSub && it.sub ? `<span class="sub">${it.sub}</span>` : ""}
+      </span>
+    </label>`).join("");
+}
+
+// sports strip marquee
+const stripItems = MODALIDADES.filter(m=>m.v!=="outro").map(m=>`<span>${m.ic} <b>${m.lb}</b></span>`).join("");
+document.getElementById("sportsTrack").innerHTML = stripItems + stripItems;
+
+renderChoiceGrid(document.getElementById("modalidadeGrid"), MODALIDADES, "modalidade", false);
+
+function updateObjetivoEQ(){
+  const modalidade = (document.querySelector('input[name="modalidade"]:checked')||{}).value || "musculacao";
+  const isMusc = modalidade === "musculacao";
+  renderChoiceGrid(document.getElementById("objetivoGrid"), isMusc?OBJETIVOS_MUSCULACAO:OBJETIVOS_ESPORTE, "objetivo", false);
+  renderChoiceGrid(document.getElementById("localGrid"), isMusc?LOCAL_MUSCULACAO:LOCAL_ESPORTE, "local", true);
+  document.getElementById("localTitle").textContent = isMusc ? "Onde e com o que você treina?" : "Você tem acesso a quadra / campo / piscina / pista?";
+  document.getElementById("localHint").textContent = isMusc ? "O plano troca os exercícios automaticamente conforme o que você tem disponível." : "Sem acesso ao espaço específico? O plano adapta a parte técnica.";
+}
+updateObjetivoEQ();
+document.getElementById("modalidadeGrid").addEventListener("change", updateObjetivoEQ);
+
+/* =========================================================
+   WIZARD NAV
+   ========================================================= */
+const steps = Array.from(document.querySelectorAll(".step"));
+const totalSteps = steps.length;
+let current = 1;
+
+const progressBar = document.getElementById("progressBar");
+progressBar.innerHTML = Array.from({length:totalSteps}).map(()=>`<div class="progress-seg"></div>`).join("");
+const segs = Array.from(progressBar.children);
+
+const stepNames = ["Modalidade","Seus dados","Objetivo","Nível","Rotina","Local / equipamento","Saúde","Alimentação","Recuperação"];
+
+function updateUI(){
+  steps.forEach(s=> s.classList.toggle("active", Number(s.dataset.step)===current));
+  segs.forEach((seg,i)=>{
+    seg.classList.remove("active","done");
+    if(i < current-1) seg.classList.add("done");
+    if(i === current-1) seg.classList.add("active");
+  });
+  document.getElementById("stepLabel").textContent = `Passo ${current} de ${totalSteps}`;
+  document.getElementById("stepName").textContent = stepNames[current-1];
+  document.getElementById("btnPrev").style.visibility = current===1 ? "hidden" : "visible";
+  document.getElementById("btnNext").textContent = current===totalSteps ? "Gerar meu treino →" : "Próximo →";
+  document.getElementById("validationHint").textContent = "";
+}
+
+function validateStep(){
+  const stepEl = steps[current-1];
+  const reqRadios = {};
+  stepEl.querySelectorAll('input[required][type=radio]').forEach(r=>{ reqRadios[r.name]=reqRadios[r.name]||false; if(r.checked) reqRadios[r.name]=true; });
+  for(const k in reqRadios){ if(!reqRadios[k]) return `Selecione uma opção para continuar.`; }
+  const reqOthers = stepEl.querySelectorAll('input[required]:not([type=radio]), select[required]');
+  for(const el of reqOthers){ if(!el.value){ return "Preencha os campos obrigatórios."; } }
+  return null;
+}
+
+document.getElementById("btnNext").addEventListener("click", ()=>{
+  const err = validateStep();
+  if(err){ document.getElementById("validationHint").textContent = err; return; }
+  if(current < totalSteps){ current++; updateUI(); window.scrollTo({top:document.getElementById("wizard").offsetTop-70, behavior:"smooth"}); }
+  else{ gerarTreino(); }
+});
+document.getElementById("btnPrev").addEventListener("click", ()=>{
+  if(current>1){ current--; updateUI(); }
+});
+updateUI();
+
+/* =========================================================
+   COLETA DE DADOS
+   ========================================================= */
+function coletarDados(){
+  const val = id => (document.getElementById(id)||{}).value;
+  const radio = name => (document.querySelector(`input[name="${name}"]:checked`)||{}).value;
+  const checks = Array.from(document.querySelectorAll('#saudeCheckboxes input:checked')).map(c=>c.value);
+  return {
+    modalidade: radio("modalidade"),
+    nome: val("nome"), idade: val("idade"), altura: val("altura"), peso: val("peso"), sexo: val("sexo"),
+    gordura: val("gordura"), circunferencias: val("circunferencias"), genetica: val("genetica"),
+    objetivo: radio("objetivo"),
+    nivel: radio("nivel"),
+    dias: Number(val("dias")), tempo: val("tempo"), rotinaDia: val("rotinaDia"),
+    local: radio("local"),
+    saude: checks, saudeObs: val("saudeObs"),
+    refeicoes: val("refeicoes"), proteina: val("proteina"), restricao: val("restricao"), orcamento: val("orcamento"),
+    sono: val("sono"), estresse: val("estresse"),
+  };
+}
+
+/* =========================================================
+   IA — HUGGING FACE INFERENCE API
+   =========================================================
+   ATENÇÃO: este token fica visível no código-fonte da página
+   para qualquer pessoa que abrir o site. Troque por um token
+   novo antes de publicar e, idealmente, faça essa chamada a
+   partir de um backend/proxy (veja aviso no chat do Claude).
+*/
+const HF_TOKEN = "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";
+const HF_MODEL = "meta-llama/Llama-3.1-8B-Instruct";
+
+function labelObjetivo(v,musc){
+  const list = musc ? OBJETIVOS_MUSCULACAO : OBJETIVOS_ESPORTE;
+  return (list.find(o=>o.v===v)||{}).lb || v;
+}
+function nivelLabel(v){ return {iniciante:"Iniciante", intermediario:"Intermediário", avancado:"Avançado"}[v]||v; }
+function modalidadeLabel(v){ return (MODALIDADES.find(m=>m.v===v)||{}).lb || v; }
+function localLabel(v, musc){
+  const list = musc ? LOCAL_MUSCULACAO : LOCAL_ESPORTE;
+  return (list.find(o=>o.v===v)||{}).lb || v;
+}
+const SAUDE_LABELS = {
+  joelho:"Dor/lesão no joelho", ombro:"Dor/lesão no ombro", coluna:"Dor/lesão na coluna",
+  cardiaca:"Condição cardíaca", pressao:"Pressão alta/baixa", nenhuma:"Nenhuma restrição"
+};
+
+function montarPrompt(d){
+  const isMusc = d.modalidade === "musculacao";
+  const linhas = [];
+  linhas.push(`Modalidade: ${modalidadeLabel(d.modalidade)}`);
+  if(d.nome) linhas.push(`Nome: ${d.nome}`);
+  if(d.idade) linhas.push(`Idade: ${d.idade}`);
+  if(d.altura) linhas.push(`Altura: ${d.altura} cm`);
+  if(d.peso) linhas.push(`Peso: ${d.peso} kg`);
+  if(d.sexo) linhas.push(`Sexo: ${d.sexo}`);
+  if(d.gordura) linhas.push(`% de gordura estimado: ${d.gordura}`);
+  linhas.push(`Objetivo: ${labelObjetivo(d.objetivo, isMusc)}`);
+  linhas.push(`Nível de experiência: ${nivelLabel(d.nivel)}`);
+  linhas.push(`Dias disponíveis por semana: ${d.dias}`);
+  if(d.tempo) linhas.push(`Tempo por sessão: ${d.tempo}`);
+  if(d.rotinaDia) linhas.push(`Rotina diária: ${d.rotinaDia}`);
+  linhas.push(`Local/equipamento: ${localLabel(d.local, isMusc)}`);
+  if(d.saude && d.saude.length) linhas.push(`Restrições de saúde: ${d.saude.map(s=>SAUDE_LABELS[s]||s).join(", ")}`);
+  if(d.saudeObs) linhas.push(`Observações de saúde: ${d.saudeObs}`);
+  if(d.refeicoes) linhas.push(`Refeições por dia: ${d.refeicoes}`);
+  if(d.proteina) linhas.push(`Consome proteína suficiente: ${d.proteina}`);
+  if(d.restricao) linhas.push(`Restrição alimentar: ${d.restricao}`);
+  if(d.orcamento) linhas.push(`Orçamento para alimentação/suplementos: ${d.orcamento}`);
+  if(d.sono) linhas.push(`Qualidade/horas de sono: ${d.sono}`);
+  if(d.estresse) linhas.push(`Nível de estresse: ${d.estresse}`);
+
+  return `Você é um treinador especialista em ${isMusc ? "musculação" : "preparação esportiva"}. Monte um plano de treino individualizado, seguro e bem estruturado em português (pt-BR), em formato Markdown, com base nestas respostas de um questionário:
+
+${linhas.join("\n")}
+
+Estruture a resposta assim:
+## Nome do plano (curto, chamativo)
+Um parágrafo curto de introdução personalizada.
+
+## Visão geral
+Objetivo, frequência semanal, séries/reps ou volume geral (se aplicável).
+
+## Treino por dia
+Para cada um dos ${d.dias} dias de treino, use "### Dia X — [nome do foco]" e liste, em tópicos, aquecimento, os exercícios/drills principais (com séries x repetições ou duração quando fizer sentido) e desaquecimento.
+
+## Periodização sugerida (4 semanas)
+Breve orientação de progressão semana a semana.
+
+## Observações importantes
+Notas personalizadas considerando saúde, sono, estresse e alimentação informados.
+
+Regras:
+- Adapte os exercícios ao local/equipamento informado.
+- Se houver dor/lesão relatada, ajuste ou substitua exercícios de risco e recomende cautela.
+- Seja específico e prático, sem enrolação.
+- Termine com uma frase reforçando que este é um plano gerado automaticamente e não substitui avaliação de um profissional de educação física, buscando liberação médica quando necessário.`;
+}
+
+// Conversor simples de Markdown -> HTML (suficiente para a resposta da IA)
+function markdownToHtml(md){
+  const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const lines = esc(md).replace(/\r\n/g,"\n").split("\n");
+  let html = "", inUl = false, inOl = false;
+  const closeLists = () => { if(inUl){ html += "</ul>"; inUl=false; } if(inOl){ html += "</ol>"; inOl=false; } };
+  const inline = t => t
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>")
+    .replace(/`(.+?)`/g, "<code>$1</code>");
+  lines.forEach(line=>{
+    const l = line.trim();
+    if(!l){ closeLists(); return; }
+    if(/^---+$/.test(l)){ closeLists(); html += "<hr>"; return; }
+    let m;
+    if((m = l.match(/^### (.+)/))){ closeLists(); html += `<h3>${inline(m[1])}</h3>`; return; }
+    if((m = l.match(/^## (.+)/))){ closeLists(); html += `<h2>${inline(m[1])}</h2>`; return; }
+    if((m = l.match(/^# (.+)/))){ closeLists(); html += `<h1>${inline(m[1])}</h1>`; return; }
+    if((m = l.match(/^[-*] (.+)/))){ if(!inUl){ closeLists(); html+="<ul>"; inUl=true; } html += `<li>${inline(m[1])}</li>`; return; }
+    if((m = l.match(/^\d+\. (.+)/))){ if(!inOl){ closeLists(); html+="<ol>"; inOl=true; } html += `<li>${inline(m[1])}</li>`; return; }
+    closeLists();
+    html += `<p>${inline(l)}</p>`;
+  });
+  closeLists();
+  return html;
+}
+
+async function chamarIA(prompt){
+  const response = await fetch("https://router.huggingface.co/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${HF_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: HF_MODEL,
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 1800,
+      temperature: 0.7,
+    }),
+  });
+  if(!response.ok){
+    const errText = await response.text().catch(()=> "");
+    throw new Error(`Erro ${response.status} na API: ${errText || response.statusText}`);
+  }
+  const data = await response.json();
+  const texto = data?.choices?.[0]?.message?.content;
+  if(!texto) throw new Error("A IA não retornou nenhum conteúdo.");
+  return texto;
+}
+
+function mostrarBotaoRefazer(){
+  document.getElementById("btnRefazer").addEventListener("click", ()=>{
+    document.getElementById("resultado").style.display = "none";
+    document.getElementById("wizard").style.display = "block";
+    current = 1; updateUI();
+    window.scrollTo({top:document.getElementById("wizard").offsetTop-70, behavior:"smooth"});
+  });
+}
+
+async function gerarTreino(){
+  const d = coletarDados();
+  const resultadoEl = document.getElementById("resultado");
+  const contentEl = document.getElementById("resultadoContent");
+
+  document.getElementById("wizard").style.display = "none";
+  resultadoEl.style.display = "block";
+  contentEl.innerHTML = `
+    <div class="ai-loading">
+      <div class="spinner"></div>
+      <p>Gerando seu treino personalizado com IA...</p>
+    </div>`;
+  window.scrollTo({top:0, behavior:"smooth"});
+
+  try{
+    const prompt = montarPrompt(d);
+    const texto = await chamarIA(prompt);
+    const html = `
+      <div class="ai-content">${markdownToHtml(texto)}</div>
+      <p class="disclaimer">Este treino foi gerado por inteligência artificial com base nas respostas do questionário e não substitui a avaliação de um profissional de educação física — especialmente se você tiver lesões, cirurgias recentes, condições de saúde ou estiver usando medicamentos. Procure liberação médica antes de iniciar um novo programa de treino quando necessário.</p>
+      <div style="text-align:center;margin:36px 0;"><button type="button" class="btn btn-outline" id="btnRefazer">↺ Refazer questionário</button></div>`;
+    contentEl.innerHTML = html;
+  }catch(err){
+    contentEl.innerHTML = `
+      <div class="ai-error">
+        <b>Não foi possível gerar o treino agora</b>
+        Ocorreu um erro ao consultar a IA: ${err.message}. Verifique sua conexão ou tente novamente em instantes.
+      </div>
+      <div style="text-align:center;margin:36px 0;"><button type="button" class="btn btn-outline" id="btnRefazer">↺ Voltar ao questionário</button></div>`;
+  }
+  mostrarBotaoRefazer();
+}
+
+</script>
+</body>
+</html>
